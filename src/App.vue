@@ -1,52 +1,52 @@
 <template>
   <div id="app">
-    <div class="flex">
-
-   
-    <PostInsta
-    v-for="post in postagens" :key="post.id"
-    :nome="post.nome"
-    :legenda="post.legenda"
-    :fotoId="post.fotoId"/>
-    <hr/>
-    <InteracaoInsta
-    imagem="coracao.png"
-    text="Ola"/>
-    <i class="lni lni-heart-filled"></i>
-    <hr/>
-    </div>
+    <router-view> </router-view>
   </div>
 </template>
 
 <script>
-import PostInsta from './components/PostInsta.vue'
-import InteracaoInsta from'./components/InteracaoInsta.vue'
-//import axios from "axios";
+import axios from "axios";
 
+//axios.get('https://yourbackend.io/users/all').then(posts => {
+///   this.posts = posts;
+//});
 export default {
-  name: 'App',
-  components: {
-    PostInsta,
-    InteracaoInsta,
+  name: "App",
+  data() {
+    return {};
   },
-
-  data(){
-    return {
-      postagens: [
-    {
-        "nome":"jorge",
-        "fotoId":"land.jpg",
-        "descricao": "esse é o post 1"
+  created() {
+    this.chamar();
+    this.listar();
+  },
+  methods: {
+    chamar() {
+      axios
+        .post("http://127.0.0.1:8000/api/criar", {
+          nome: "maria",
+          imagem:
+            "5393980ecb8d7146c69970d337f9e2e715140a1ce8d8347a98fb13d610b2a960",
+          legenda: "Hello",
+        })
+        .then((resposta) => {
+          console.log(resposta.data);
+        })
+        .catch((erro) => {
+          console.log(erro);
+        });
     },
-    {
-        "nome":"gabrielaa",
-        "fotoId":"landscape.jpg",
-        "descricao": "esse é o post 2"
-    }
 
-]
-    }
-  }
+    listar() {
+      axios
+        .get("http://127.0.0.1:8000/api/listar")
+        .then((respostaL) => {
+          console.log(respostaL.data);
+        })
+        .catch((erroL) => {
+          console.log(erroL);
+        });
+    },
+  },
 };
 </script>
 
