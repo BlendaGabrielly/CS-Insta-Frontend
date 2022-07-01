@@ -1,67 +1,64 @@
 <template>
   <body>
-    
-
-<div class="card">
-      <div class="card-header bg-transparent">
-        <div class="mariadb">
-          <img class="perfil" :src="fotoId" alt="" />
-
-          <h3 class="username">{{ nome }}</h3>
-        </div>
-
-
-
-        <i class="lni lni-more-alt"></i>
-      </div>
-      <div class="card-body">
-        <img :src="fotoId" alt="Pessoa" />
-        <div class="overlay" :class="{ exibir : mostrar }">
-          <img src="coracao.png" alt="" />
-        </div>
-      </div>
-      <div class="card-footer bg-transparent">
-        <p class="descricao">Olá esse post</p>
-      </div>
-    </div>
-
-    <div>
-      <i @click="curtida()"
-        :class="{ 'lni lni-heart-filled': mostrar, 'lni lni-heart': !mostrar }"
-      ></i>
-    </div>
+    <PostUnico v-for="post in posts" :key="post.id" :post="post" />
   </body>
 </template>
 
 <script>
-export default{
-  name: 'PostInsta',
-     data(){
-        return{
-            like: false,
-            mostrar: false,
-        }
-    },
-    props:{
-      nome:String,
-      imagem:String,
-      legenda:String,
-      fotoId:String
-    },
-    methods:{
-        curtida(){
-            this.like=!this.like;
-          if(this.like==true){
-           this.mostrar=!this.mostrar;
-        setTimeout(()=>{this.mostrar=!this.mostrar;},
-        800)
-    }
-        },
-          
-        }
+import axios from "axios";
+import PostUnico from "./PostUnico.vue";
 
-        }
+export default {
+  name: "PostInsta",
+  components:{
+    PostUnico
+  },
+  data() {
+    return {     
+      posts:null
+    };
+  },
+  created() {
+    this.chamar();
+    this.listar();
+  },
+  props: {
+    nome: String,
+    imagem: String,
+    legenda: String,
+    fotoId: String,
+  },
+  methods: {
+  
+    chamar() {
+      axios
+        .post("http://127.0.0.1:8000/api/criar", {
+          nome: "maria",
+          imagem:
+            "5393980ecb8d7146c69970d337f9e2e715140a1ce8d8347a98fb13d610b2a960",
+          legenda: "Hello",
+        })
+        .then((resposta) => {
+          console.log(resposta.data);
+        })
+        .catch((erro) => {
+          console.log(erro);
+        });
+    },
 
+    listar() {
+      axios
+        .get("http://127.0.0.1:8000/api/listar")
+        .then((resposta) => {
+          this.posts=resposta.data;
+          console.log(resposta.data);
+        })
+        .catch((erroL) => {
+          console.log(erroL);
+        });
+    },
+  },
+};
 </script> 
 
 <style>
@@ -141,9 +138,7 @@ header img {
   font-size: 1.3rem;
 }
 
-.card:not(.curtido) .lni-heart-filled {
-  display: none;
-}
+
 
 .card.curtido .lni-heart {
   display: none;
